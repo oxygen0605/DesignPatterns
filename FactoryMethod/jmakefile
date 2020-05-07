@@ -1,0 +1,6 @@
+Main.java
+#framework/Factory.java
+#framework/Product.java
+framework/
+idcard/IDCard.java
+idcard/IDCardFactory.java
