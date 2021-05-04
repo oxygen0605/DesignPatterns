@@ -1,43 +1,54 @@
 #include <stdio.h>
 #include "State.h"
 
-static void s_Stopped_run(FSM *fsm);
+static enum StateID {
+    INIT_STATE,
+    MIDDLE_STATE,
+    FINAL_STATE 
+} e_st;
 
-static void s_Running_entry(FSM *fsm);
-static void s_Running_exit(FSM *fsm);
-static void s_Running_stop(FSM *fsm);
+static enum EventID {
+    FIRST_EVE,
+    SECOND_EVE
+} e_ev;
 
-static const State s_Stopped = {0, 0, s_Stopped_run, 0, 0};
-static const State s_Running = {s_Running_entry, s_Running_exit, 0, s_Running_stop, 0};
+static int s_Closed_run(FSM *fsm);
+static int s_Opened_entry(FSM *fsm);
+static int s_Opened_exit(FSM *fsm);
+static int s_Opened_stop(FSM *fsm);
+
+static const State s_Closed = {0, 0, s_Closed_run, 0, 0};
+static const State s_Opened = {s_Opened_entry, s_Opened_exit, 0, s_Opened_stop, 0};
 
 void State_init(FSM *fsm){
+    printf("%d\n", INIT_STATE);
     void init_last_substate(FSM *fsm);
-    fsm->current_state = &s_Stopped;
+    fsm->current_state = &s_Closed;
     fsm->current_substate = 0;
     init_last_substate(fsm);
 }
 
 /** Events **/
-/* Stopped */
-static void s_Stopped_run(FSM *fsm){
-    printf("State: Stopped -> Runnning\n");
-    FSM_change_state(fsm, &s_Running);
+/* Closed */
+static int s_Closed_run(FSM *fsm){
+    printf("State: Closed -> Runnning\n");
+    FSM_change_state(fsm, &s_Opened);
 }
 
-/** Running **/
+/** Opened **/
 /* 入状イベント */
-static void s_Running_entry(FSM *fsm){
+static int s_Opened_entry(FSM *fsm){
     FSM_change_substate(fsm, fsm->last_substate);
 }
 
 /* 出状イベント */
-static void s_Running_exit(FSM *fsm){
+static int s_Opened_exit(FSM *fsm){
     fsm->last_substate = fsm->current_substate;
     FSM_change_substate(fsm, 0);
 }
 
 /* 運転停止イベント */
-static void s_Running_stop(FSM *fsm){
-    printf("State: Running -> Stopped");
-    FSM_change_state(fsm, &s_Stopped);
+static int s_Opened_stop(FSM *fsm){
+    printf("State: Opened -> Closed\n");
+    FSM_change_state(fsm, &s_Closed);
 }

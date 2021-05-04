@@ -1,11 +1,6 @@
 #include <stdio.h>
 #include "FiniteStateMachine.h"
 
-enum StateID {
-    INIT_STATE,
-    MIDDLE_STATE,
-    FINAL_STATE 
-};
 
 int main(void){
 
